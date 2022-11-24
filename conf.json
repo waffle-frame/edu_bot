@@ -1,0 +1,16 @@
+{
+    "bot": {
+        "token": "token:bot"
+    },
+    "database": {
+        "username": "postgres",
+        "password": "postgres",
+        "host": "localhost",
+        "port": 5432,
+        "database": "database_name"
+    },
+    "logger": {
+        "path": "/path/to/log/file",
+        "level": "ERROR"
+    }
+}
