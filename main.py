@@ -1,23 +1,25 @@
-from loguru import logger
+# Packages
+from loguru import logger as logrus
 from aiogram.types.message import ParseMode
 from aiogram import Bot, Dispatcher, executor
 
+# Configs
 from utils.config import load_config
 
 
 conf = load_config()
 
-# 
+
+# Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
     import handlers
-    from utils import logrus
+    from utils import logger
 
-    logrus.setup(conf.logger.path)
+    logger.setup(conf.logger.path)
+    logrus.info('Bot is successful running!')
 
-    logger.info('Bot is successful running!')
 
-
-# 
+# Stop bot and another connections
 async def stop(dp: Dispatcher):
     pass
 

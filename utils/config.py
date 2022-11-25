@@ -1,11 +1,16 @@
-import json
-from typing import List
 from dataclasses import dataclass
+from argparse import ArgumentParser
+from json import loads as load_json
 
 
 @dataclass
 class Bot:
     token: str
+
+@dataclass
+class Userbot:
+    api_id: int
+    api_hash: str
 
 @dataclass
 class Database:
@@ -22,27 +27,50 @@ class Logger:
 @dataclass
 class Config:
     bot: Bot
+    userbot: Userbot
     database: Database
     logger: Logger
 
 
-def load_config(path: str = None):
-    f = open('conf.json', 'r')
-    conf = json.loads(f.read())
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument('-dev', help='use production configuration', action='store_true')
+    parser.add_argument('-prod', help='use developer configuration', action='store_true')
+
+    args = parser.parse_args()
+    if not args.dev and not args.prod:
+        parser.print_help()
+        exit(1)
+
+    if args.dev:
+        return 'dev_config.json'
+
+    return 'config.json'
+
+
+def load_config():
+    PATH_CONFIG = parse_args()
+
+    f = open(PATH_CONFIG, 'r')
+    config = load_json(f.read())
     f.close()
 
     return Config(
         bot = Bot(
-            token = conf['bot']["token"],
+            token = config['bot']["token"],
+        ),
+        userbot = Userbot(
+            api_id = config['userbot']["api_id"],
+            api_hash = config['userbot']["api_hash"],
         ),
         database = Database(
-            username = conf['database']['username'],
-            password = conf['database']['password'],
-            host = conf['database']['host'],  
-            port = conf['database']['port'],
+            username = config['database']['username'],
+            password = config['database']['password'],
+            host = config['database']['host'],
+            port = config['database']['port'],
         ),
         logger = Logger(
-            path = conf['logger']['path'],
-            level = conf['logger']['level'],
+            path = config['logger']['path'],
+            level = config['logger']['level'],
         ),
     )

@@ -3,3 +3,5 @@ env/
 *.log
 
 test*
+*.session
+dev_config.json
