@@ -2,7 +2,6 @@ aiogram==2.23.1
 aiohttp==3.8.3
 aiosignal==1.3.1
 async-timeout==4.0.2
-asyncpg==0.27.0
 attrs==22.1.0
 Babel==2.9.1
 certifi==2022.9.24
@@ -10,7 +9,6 @@ charset-normalizer==2.1.1
 frozenlist==1.3.3
 greenlet==2.0.1
 idna==3.4
-loguru==0.6.0
 magic-filter==1.0.9
 multidict==6.0.2
 pyaes==1.6.1

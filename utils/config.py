@@ -11,6 +11,10 @@ class Bot:
 class Userbot:
     api_id: int
     api_hash: str
+    phone_number: str # Format: +1234567890
+
+    def validate_phone_number():
+        pass
 
 @dataclass
 class Database:
@@ -18,6 +22,7 @@ class Database:
     password: str
     host: str
     port: int
+    db_name: str
 
 @dataclass
 class Logger:
@@ -62,12 +67,14 @@ def load_config():
         userbot = Userbot(
             api_id = config['userbot']["api_id"],
             api_hash = config['userbot']["api_hash"],
+            phone_number = config['userbot']["phone_number"], 
         ),
         database = Database(
             username = config['database']['username'],
             password = config['database']['password'],
             host = config['database']['host'],
             port = config['database']['port'],
+            db_name = config['database']['db_name'],
         ),
         logger = Logger(
             path = config['logger']['path'],

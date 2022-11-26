@@ -1,10 +1,14 @@
 # Packages
-from loguru import logger as logrus
+from loguru import logger
 from aiogram.types.message import ParseMode
 from aiogram import Bot, Dispatcher, executor
 
 # Configs
+import handlers
 from utils.config import load_config
+from middlewares import setup_middlewares
+from settings.logger import setup_logger
+from settings.database import setup_database
 
 
 conf = load_config()
@@ -12,11 +16,13 @@ conf = load_config()
 
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
-    import handlers
-    from utils import logger
+    setup_logger(conf.logger.path)
+    database = await setup_database(conf.database)
 
-    logger.setup(conf.logger.path)
-    logrus.info('Bot is successful running!')
+    await setup_middlewares(dp, database)
+    await handlers.setup_handlers(dp)
+
+    logger.info('Bot is successful running!')
 
 
 # Stop bot and another connections
