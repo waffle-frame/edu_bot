@@ -65,7 +65,7 @@ async def create_group(client: TelegramClient, data: dict) -> str:
     invite_link = await client(ExportChatInviteRequest(
         peer = PeerChat(chat_id),
         expire_date = datetime.today() + timedelta(days=365),
-        title = 'link',
+        title = "link",
     ))
 
     return invite_link.link

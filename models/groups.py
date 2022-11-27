@@ -16,11 +16,11 @@ class Group(Base):
         This table contains the activities of managers. 
         During the creation of the group, the manager's data is saved.
     """
-    __tablename__ = 'groups'
+    __tablename__ = "groups"
 
     OCCUPATION_TYPES = [
-        ('Групповые', 'Групповые'),
-        ('Индивидуальные', 'Индивидуальные'),
+        ("Групповые", "Групповые"),
+        ("Индивидуальные", "Индивидуальные"),
     ]
 
     id = Column(Integer, primary_key = True)
