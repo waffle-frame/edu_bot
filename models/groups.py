@@ -1,8 +1,14 @@
+from typing import Any
+from loguru import logger
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, \
-                    DateTime, VARCHAR, ChoiceType
 
-from settings.database import Base
+from sqlalchemy import insert
+from sqlalchemy.orm import scoped_session
+from sqlalchemy_utils.types import ChoiceType
+from sqlalchemy.exc import IntegrityError, DBAPIError
+from sqlalchemy import Column, String, Integer, DateTime, VARCHAR
+
+from models import Base
 
 
 class Group(Base):
@@ -13,8 +19,8 @@ class Group(Base):
     __tablename__ = 'groups'
 
     OCCUPATION_TYPES = [
-        ('group', 'Групповые')
-        ('individual', 'Индивидуальные'),
+        ('Групповые', 'Групповые'),
+        ('Индивидуальные', 'Индивидуальные'),
     ]
 
     id = Column(Integer, primary_key = True)
@@ -26,15 +32,18 @@ class Group(Base):
     group_title = Column(VARCHAR(20), nullable = False)
     occupation_type = Column(ChoiceType(OCCUPATION_TYPES), nullable = False)
 
-    def __init__(self, id, created_at, first_name, last_name, username, userbot, group_title, occupation_type):
-        self.id = id
-        self.created_at = created_at
-        self.first_name = first_name
-        self.last_name = last_name
-        self.username = username
-        self.userbot = userbot
-        self.group_title = group_title
-        self.occupation_type = occupation_type
+    @classmethod
+    async def create(self, db: scoped_session, **kwargs: Any) -> bool:
+        try:
+            query = insert(self).values(**kwargs)
+            await db.execute(query)
+            await db.commit()
+        except IntegrityError as e:
+            logger.error(e)
+            return False
+        except DBAPIError as e:
+            logger.error("ROLLBACK: ", e)
+            await db.rollback()
+            raise False
 
-    def __repr__(self):
-        return f"Group(id={self.id!r}, occupation_type={self.occupation_type!r}, title={self.title!r})"
+        return True

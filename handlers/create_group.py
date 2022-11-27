@@ -1,13 +1,15 @@
-#* No category
 from random import randint
-from sqlalchemy.ext.asyncio import AsyncSession
+
+from telethon.client import TelegramClient
+from sqlalchemy.orm import scoped_session
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, ContentType
 
+from models.groups import Group
 from states.create_group import CreateGroup
 from utils.userbot.create_group import create_group
-from keyboards.type_of_lesson import type_of_lesson_kb, set_image_kb, \
-                                     get_create_group_button_text
+from keyboards.type_of_lesson import \
+    type_of_lesson_kb, set_image_kb, get_create_group_button_text
 
 
 async def pick_occupation_type(message: Message):
@@ -46,7 +48,7 @@ async def get_group_image(message: Message, state: FSMContext):
     await state.finish()
 
 
-async def set_group_image(message: Message, state: FSMContext, userbot):
+async def set_group_image(message: Message, state: FSMContext, db: scoped_session, userbot: TelegramClient):
     if message.content_type != ContentType.PHOTO:
         return await message.answer("Это не совсем похоже на фотографию.\nПопробуйте ещё раз")
 
@@ -69,7 +71,21 @@ async def set_group_image(message: Message, state: FSMContext, userbot):
         data['user_id'] = message.chat.id
 
     data = await state.get_data()
-    await state.finish()
-    invite_link = await create_group(userbot, data)
+    get_userbot = await userbot.get_me()
+    userbot_data = f'{get_userbot.first_name} {get_userbot.last_name}'    
 
+    insert = await Group.create(db,
+        group_title = data['title'],
+        occupation_type = data['occupation_type'],
+        first_name = message.chat.first_name,
+        last_name = message.chat.last_name,
+        username = message.chat.username,
+        userbot = userbot_data,
+    )
+
+    await state.finish()
+    if not insert:
+        return await message.answer('Упс... Что-то пошло не так')
+
+    invite_link = await create_group(userbot, data)
     await message.answer(f"Группа была успешно создана!\nПригласительная ссылка: {invite_link}")

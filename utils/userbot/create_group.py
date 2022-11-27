@@ -1,15 +1,18 @@
-from datetime import datetime
 import os
 from loguru import logger
+from datetime import datetime, timedelta
+
+from telethon.client import TelegramClient
 from telethon.tl.types import InputChatUploadedPhoto, ChatBannedRights, PeerChat 
-from telethon.tl.functions.messages import CreateChatRequest, ExportChatInviteRequest, \
-                                        EditChatPhotoRequest, EditChatAdminRequest, \
-                                    EditChatDefaultBannedRightsRequest
+from telethon.tl.functions.messages import \
+    CreateChatRequest, EditChatAdminRequest, EditChatPhotoRequest, \
+    ExportChatInviteRequest, EditChatDefaultBannedRightsRequest
+
 
 
 # Create a private chat and set up
 # Add the user who used the command and grant admin rights
-async def create_group(client, data):
+async def create_group(client: TelegramClient, data: dict) -> str:
     # Create chat and add user
     result = await client(
         CreateChatRequest(users = [data["username"]], title = data["title"])
@@ -58,10 +61,10 @@ async def create_group(client, data):
         )
     ))
 
+    # Get invite link
     invite_link = await client(ExportChatInviteRequest(
         peer = PeerChat(chat_id),
-        legacy_revoke_permanent = True,
-        expire_date = datetime(2027, 6, 25),
+        expire_date = datetime.today() + timedelta(days=365),
         title = 'link',
     ))
 

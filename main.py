@@ -18,11 +18,11 @@ conf = load_config()
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
     setup_logger(conf.logger.path)
-    client = await setup_userbot(conf.userbot)
-    database = await setup_database(conf.database)
+    client = setup_userbot(conf.userbot)
+    database = setup_database(conf.database)
 
-    await setup_middlewares(dp, database, client)
-    await handlers.setup_handlers(dp)
+    setup_middlewares(dp, database, client)
+    handlers.setup_handlers(dp)
 
     logger.info('Bot is successful running!')
 

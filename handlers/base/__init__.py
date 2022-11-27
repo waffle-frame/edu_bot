@@ -8,7 +8,7 @@ from handlers.base.start import start
 from handlers.base.cancle import cancel_state
 
 
-async def register_base_commands(dp: Dispatcher):
+def register_base_commands(dp: Dispatcher):
     dp.register_message_handler(cancel_state, Command("cancle"), Text(equals='cancel', ignore_case=True), state="*")
     dp.register_message_handler(start, CommandStart(), state="*")
     dp.register_message_handler(help, CommandHelp(), state="*")

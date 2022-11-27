@@ -1,12 +1,11 @@
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 from utils.config import Database
 
 
 # Setup async connection SQLAlchemy with postgres database
-async def setup_database(conf: Database):
+def setup_database(conf: Database):
     url = f"postgresql+asyncpg://{conf.username}:{conf.password}@{conf.host}:{conf.port}/{conf.db_name}"
 
     engine = create_async_engine(
@@ -15,13 +14,9 @@ async def setup_database(conf: Database):
         pool_size = 100,
         max_overflow = 200,
         future = True,
-        echo = True,
+        echo = False,
     )
 
     return sessionmaker(
         bind = engine, expire_on_commit = False, class_ = AsyncSession
     )
-
-
-class Base(DeclarativeBase):
-    pass
