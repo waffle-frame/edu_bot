@@ -18,8 +18,8 @@ conf = load_config()
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
     setup_logger(conf.logger.path)
-    database = await setup_database(conf.database)
     client = await setup_userbot(conf.userbot)
+    database = await setup_database(conf.database)
 
     await setup_middlewares(dp, database, client)
     await handlers.setup_handlers(dp)
