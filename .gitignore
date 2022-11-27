@@ -2,6 +2,7 @@
 env/
 *.log
 
-test*
+*test*
 *.session
 dev_config.json
+tmp
