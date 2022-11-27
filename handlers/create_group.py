@@ -13,7 +13,7 @@ from keyboards.type_of_lesson import \
 
 
 async def pick_occupation_type(message: Message):
-    await message.answer("Для отмены введите команду /cancle")
+    await message.answer("Для отмены введите команду /cancel")
     await message.answer("Выберите тип занятий:", reply_markup = type_of_lesson_kb())
     await CreateGroup.occupation_type.set()
 
@@ -23,7 +23,7 @@ async def set_group_title(message: Message, state: FSMContext):
         return await message.answer("Вариант не существует")
 
     async with state.proxy() as data:
-        data['occupation_type'] = message.text
+        data["occupation_type"] = message.text
 
     await message.answer("Введите название группы:", reply_markup = ReplyKeyboardRemove())
     await CreateGroup.title.set()
@@ -31,7 +31,7 @@ async def set_group_title(message: Message, state: FSMContext):
 
 async def question_for_set_image(message: Message, state: FSMContext):
     async with state.proxy() as data:
-        data['title'] = message.text
+        data["title"] = message.text
 
     await message.answer("Хотите установить фотографию?", reply_markup = set_image_kb())
     await CreateGroup.image_question.set()
@@ -56,27 +56,29 @@ async def set_group_image(message: Message, state: FSMContext, db: scoped_sessio
     if photo.width < 512 or photo.height < 512:
         return await message.answer("Эта фотография маленькая.\nМинимальный формат 512x512 пикселей")
 
-    if message.chat.username == '':
+    if message.chat.username == "":
         return await message.answer(
             "Ой..\nНе удалось создать чат. Ваш __username__ недоступен." +
             "\nПопробуйте установить в настройка, затем повторите поптыку"
         )
 
     path_to_image = f"tmp/temp-{randint(1, 100)}.png"
+
+    await message.answer("Пожалуйста, подождите")
     await photo.download(destination_file = path_to_image)
 
     async with state.proxy() as data:
-        data['image_path'] = path_to_image
-        data['username'] = message.chat.username
-        data['user_id'] = message.chat.id
+        data["image_path"] = path_to_image
+        data["username"] = message.chat.username
+        data["user_id"] = message.chat.id
 
     data = await state.get_data()
     get_userbot = await userbot.get_me()
-    userbot_data = f'{get_userbot.first_name} {get_userbot.last_name}'    
+    userbot_data = f"{get_userbot.first_name} {get_userbot.last_name}"    
 
     insert = await Group.create(db,
-        group_title = data['title'],
-        occupation_type = data['occupation_type'],
+        group_title = data["title"],
+        occupation_type = data["occupation_type"],
         first_name = message.chat.first_name,
         last_name = message.chat.last_name,
         username = message.chat.username,
@@ -85,7 +87,7 @@ async def set_group_image(message: Message, state: FSMContext, db: scoped_sessio
 
     await state.finish()
     if not insert:
-        return await message.answer('Упс... Что-то пошло не так')
+        return await message.answer("Упс... Что-то пошло не так")
 
     invite_link = await create_group(userbot, data)
     await message.answer(f"Группа была успешно создана!\nПригласительная ссылка: {invite_link}")

@@ -39,8 +39,8 @@ class Config:
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument('-dev', help='use production configuration', action='store_true')
-    parser.add_argument('-prod', help='use developer configuration', action='store_true')
+    parser.add_argument("-dev", help="use production configuration", action="store_true")
+    parser.add_argument("-prod", help="use developer configuration", action="store_true")
 
     args = parser.parse_args()
     if not args.dev and not args.prod:
@@ -48,36 +48,36 @@ def parse_args():
         exit(1)
 
     if args.dev:
-        return 'dev_config.json'
+        return "dev_config.json"
 
-    return 'config.json'
+    return "config.json"
 
 
 def load_config():
     PATH_CONFIG = parse_args()
 
-    f = open(PATH_CONFIG, 'r')
+    f = open(PATH_CONFIG, "r")
     config = load_json(f.read())
     f.close()
 
     return Config(
         bot = Bot(
-            token = config['bot']["token"],
+            token = config["bot"]["token"],
         ),
         userbot = Userbot(
-            api_id = config['userbot']["api_id"],
-            api_hash = config['userbot']["api_hash"],
-            phone_number = config['userbot']["phone_number"], 
+            api_id = config["userbot"]["api_id"],
+            api_hash = config["userbot"]["api_hash"],
+            phone_number = config["userbot"]["phone_number"], 
         ),
         database = Database(
-            username = config['database']['username'],
-            password = config['database']['password'],
-            host = config['database']['host'],
-            port = config['database']['port'],
-            db_name = config['database']['db_name'],
+            username = config["database"]["username"],
+            password = config["database"]["password"],
+            host = config["database"]["host"],
+            port = config["database"]["port"],
+            db_name = config["database"]["db_name"],
         ),
         logger = Logger(
-            path = config['logger']['path'],
-            level = config['logger']['level'],
+            path = config["logger"]["path"],
+            level = config["logger"]["level"],
         ),
     )

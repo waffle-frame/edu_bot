@@ -1,13 +1,12 @@
 # Packages
 from loguru import logger
-from aiogram.types.message import ParseMode
-from aiogram import Bot, Dispatcher, executor
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram import Dispatcher, executor
 
 # Configs
 import handlers
 from utils.config import load_config
 from middlewares import setup_middlewares
+from settings.bot import dp
 from settings.logger import setup_logger
 from settings.userbot import setup_userbot
 from settings.database import setup_database
@@ -17,27 +16,27 @@ conf = load_config()
 
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
-    setup_logger(conf.logger.path)
-    client = setup_userbot(conf.userbot)
-    database = setup_database(conf.database)
+    userbot = await setup_userbot(conf.userbot)
+    engine, database = setup_database(conf.database)
 
-    setup_middlewares(dp, database, client)
+    setup_middlewares(dp, database, userbot)
+    setup_logger(conf.logger.path)
     handlers.setup_handlers(dp)
 
-    logger.info('Bot is successful running!')
+    dp.userbot = userbot    # ???
+    dp.db_engine = engine   # ???
+
+    logger.info("Bot is successful running!")
 
 
 # Stop bot and another connections
 async def stop(dp: Dispatcher):
-    pass
+    await dp.storage.close()
+    await dp.storage.wait_closed()
+    await dp.db_engine.dispose()
+    await dp.userbot.disconnect()
+    logger.info("All connections were successfully disconnected!")
 
 
-if __name__ == '__main__':
-    bot = Bot(
-        token = conf.bot.token,
-        parse_mode = ParseMode.HTML,
-        validate_token = True
-    )
-    dp = Dispatcher(bot, storage=MemoryStorage())
-
+if __name__ == "__main__":
     executor.start_polling(dp, on_startup = start, on_shutdown = stop, skip_updates = False)

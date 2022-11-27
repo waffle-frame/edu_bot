@@ -17,6 +17,6 @@ def setup_database(conf: Database):
         echo = False,
     )
 
-    return sessionmaker(
+    return engine, sessionmaker(
         bind = engine, expire_on_commit = False, class_ = AsyncSession
     )
