@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
-def get_create_group_button_text(func):
+def create_group_button_text(func):
     match func:
         case 0:
             return ["Индивидуальные", "Групповые"] 
@@ -12,7 +12,7 @@ def get_create_group_button_text(func):
 def type_of_lesson_kb():
     return ReplyKeyboardMarkup(resize_keyboard = True, one_time_keyboard = True,
         keyboard = [ 
-            [KeyboardButton(i) for i in get_create_group_button_text(0)]
+            [KeyboardButton(i) for i in create_group_button_text(0)]
         ]
     )
 
@@ -20,6 +20,6 @@ def type_of_lesson_kb():
 def set_image_kb():
     return ReplyKeyboardMarkup(resize_keyboard = True, one_time_keyboard = True,
         keyboard = [ 
-            [KeyboardButton(i) for i in get_create_group_button_text(1)]
+            [KeyboardButton(i) for i in create_group_button_text(1)]
         ]
     )
