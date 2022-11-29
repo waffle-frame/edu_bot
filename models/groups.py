@@ -14,7 +14,7 @@ from models import Base
 class Group(Base):
     """
         This table contains the activities of managers. 
-        During the creation of the group, the manager's data is saved.
+        During the creation of the group, the manager"s data is saved.
     """
     __tablename__ = "groups"
 
