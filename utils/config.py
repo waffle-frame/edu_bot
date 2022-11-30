@@ -1,7 +1,6 @@
 import os 
+from dotenv import load_dotenv
 from dataclasses import dataclass
-from argparse import ArgumentParser
-from json import loads as load_json
 
 
 @dataclass
@@ -37,52 +36,27 @@ class Config:
     database: Database
     logger: Logger
 
-
-def parse_args():
-    parser = ArgumentParser()
-    parser.add_argument("-dev", help="use production configuration", action="store_true")
-    parser.add_argument("-prod", help="use developer configuration", action="store_true")
-
-    args = parser.parse_args()
-    if not args.dev and not args.prod:
-        parser.print_help()
-        exit(1)
-
-    if args.dev:
-        return "dev_config.json"
-
-    return "config.json"
-
-
 def load_config():
-    PATH_CONFIG = parse_args()
-
-    if not os.path.exists(PATH_CONFIG):
-        PATH_CONFIG = os.path.normpath(
-            os.getcwd()+ os.sep + os.pardir) +os.sep+ PATH_CONFIG
-
-    f = open(PATH_CONFIG, "r")
-    config = load_json(f.read())
-    f.close()
+    load_dotenv()
 
     return Config(
         bot = Bot(
-            token = config["bot"]["token"],
+            token = os.environ.get("BOT_TOKEN"),
         ),
         userbot = Userbot(
-            api_id = config["userbot"]["api_id"],
-            api_hash = config["userbot"]["api_hash"],
-            phone_number = config["userbot"]["phone_number"], 
+            api_id = os.environ.get("USERBOT_BOT_API_ID"),
+            api_hash = os.environ.get("USERBOT_API_HASH"),
+            phone_number = os.environ.get("USERBOT_PHONE_NUMBER"),
         ),
         database = Database(
-            username = config["database"]["username"],
-            password = config["database"]["password"],
-            host = config["database"]["host"],
-            port = config["database"]["port"],
-            db_name = config["database"]["db_name"],
+            username = os.environ.get("POSTGRES_USERNAME"),
+            password = os.environ.get("POSTGRES_PASSWORD"),
+            host = os.environ.get("POSTGRES_HOST"),
+            port = os.environ.get("POSTGRES_PORT"),
+            db_name = os.environ.get("POSTGRES_DB_NAME"),
         ),
         logger = Logger(
-            path = config["logger"]["path"],
-            level = config["logger"]["level"],
+            path = os.environ.get("LOGGER_PATH"),
+            level = "DEBUG",
         ),
     )
