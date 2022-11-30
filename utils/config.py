@@ -1,3 +1,4 @@
+import os 
 from dataclasses import dataclass
 from argparse import ArgumentParser
 from json import loads as load_json
@@ -55,6 +56,10 @@ def parse_args():
 
 def load_config():
     PATH_CONFIG = parse_args()
+
+    if not os.path.exists(PATH_CONFIG):
+        PATH_CONFIG = os.path.normpath(
+            os.getcwd()+ os.sep + os.pardir) +os.sep+ PATH_CONFIG
 
     f = open(PATH_CONFIG, "r")
     config = load_json(f.read())
