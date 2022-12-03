@@ -6,12 +6,12 @@ from telethon.tl.functions.messages import ExportChatInviteRequest
 
 
 # Get invite link
-async def generate_invite_link(client: TelegramClient, chat_id: int) -> str:
+async def generate_invite_link(client: TelegramClient, group_id: int) -> str:
     """
         
     """
     invite = await client(ExportChatInviteRequest(
-        peer = PeerChat(chat_id),
+        peer = PeerChat(group_id),
         expire_date = datetime.today() + timedelta(days=365),
         title = "link",
     ))
