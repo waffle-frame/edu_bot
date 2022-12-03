@@ -5,6 +5,7 @@ from aiogram import Dispatcher, executor
 # Configs
 import handlers
 from utils.config import load_config
+from utils.bot.update_commands import update_commands
 from middlewares import setup_middlewares
 from settings.bot import dp
 from settings.logger import setup_logger
@@ -16,6 +17,7 @@ conf = load_config()
 
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
+    await update_commands(dp)
     userbot = await setup_userbot(conf.userbot)
     engine, database = setup_database(conf.database)
 
