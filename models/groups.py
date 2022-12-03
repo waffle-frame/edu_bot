@@ -2,8 +2,8 @@ from typing import Any
 from loguru import logger
 from datetime import datetime
 
-from sqlalchemy import insert
 from sqlalchemy.orm import scoped_session
+from sqlalchemy import insert, select, desc
 from sqlalchemy_utils.types import ChoiceType
 from sqlalchemy.exc import IntegrityError, DBAPIError
 from sqlalchemy import Column, String, Integer, DateTime, VARCHAR
@@ -29,6 +29,7 @@ class Group(Base):
     last_name = Column(VARCHAR(50), nullable = True)
     username = Column(VARCHAR(20), nullable = True)
     userbot = Column(String, nullable = False)
+    link = Column(String, nullable = False)
     group_title = Column(VARCHAR(20), nullable = False)
     occupation_type = Column(ChoiceType(OCCUPATION_TYPES), nullable = False)
 
@@ -47,3 +48,19 @@ class Group(Base):
             raise False
 
         return True
+
+    @classmethod
+    async def select_history_tail(self, db: scoped_session, **kwargs: Any):
+        limit = 10
+        if kwargs.get('limit', None):
+            limit = kwargs.get('limit')
+
+        query = select(
+            self.group_title, self.link, self.occupation_type, self.created_at 
+        ).order_by(desc(self.created_at)
+        ).limit(limit)
+
+        data = await db.execute(query)
+        await db.commit()
+
+        return data.fetchall()
