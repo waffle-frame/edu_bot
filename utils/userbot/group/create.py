@@ -14,26 +14,25 @@ async def create_megagroup(client: TelegramClient, data: dict) -> str:
         Create a private chat and set up.
         Add the user who used the command and grant admin rights.
     """
-
-    print(data)
-
-    result = await client(CreateChatRequest(
-        users = ["educational_establishments_bot"], title = data["title"]
-    ))
-    group_id = result.chats[0].id
-
     try:
-        await AddChatUserRequest(
-            chat_id = group_id, user_id = data["user_id"], fwd_limit = 0
-        )
+        result = await client(CreateChatRequest(
+            users = ["educational_establishments_bot"], title = data["title"]
+        ))
+        group_id = result.chats[0].id
+
+        try:
+            await client(AddChatUserRequest(
+                chat_id = group_id, user_id = data["username"], fwd_limit = 100
+            ))
+            await update_photo(client, group_id, data['photo_path'])
+            megagroup_id = await migrate_to_megagroup(client, group_id, data, True)
+            return await generate_invite_link(client, megagroup_id)
+
+        except Exception as e:
+            logger.error(e)
+
         await update_photo(client, group_id, data['photo_path'])
-        await migrate_to_megagroup(client, data, group_id)
-        return await generate_invite_link(client, group_id)
-
+        megagroup_id = await migrate_to_megagroup(client, group_id, data, False)
+        return await generate_invite_link(client, megagroup_id)
     except Exception as e:
-        logger.error(e)
-
-    await update_photo(client, group_id, data['photo_path'])
-    await migrate_to_megagroup(client, group_id, data, False)
-
-    return await generate_invite_link(client, group_id)
+        print(e, "create")
