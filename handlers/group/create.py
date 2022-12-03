@@ -3,7 +3,7 @@ from telethon.client import TelegramClient
 from sqlalchemy.orm import scoped_session
 
 from models.groups import Group
-from utils.userbot.group.create import create_group
+from utils.userbot.group.create import create_megagroup
 
 
 async def complex_action(message: Message, userbot: TelegramClient, 
@@ -23,4 +23,4 @@ async def complex_action(message: Message, userbot: TelegramClient,
     if not insert:
         return "Упс... Что-то пошло не так"
 
-    return await create_group(userbot, data)
+    return await create_megagroup(userbot, data)
