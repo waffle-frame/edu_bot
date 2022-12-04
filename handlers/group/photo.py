@@ -58,10 +58,15 @@ async def set_group_photo(message: Message, state: FSMContext,
     path_to_image = f"tmp/temp-{randint(1, 100)}.png"
     await photo.download(destination_file = path_to_image)
 
+    if message.chat.username != "":
+        username = message.chat.username
+    else:
+        username = ""
+
     async with state.proxy() as data:
         data["photo_path"] = path_to_image
         data["user_id"] = message.chat.id
-        data["username"] = [message.chat.username if message.chat.username != "" else ""]
+        data["username"] = username
 
     data = await state.get_data()
     invite_link = await complex_action(message, userbot, db, data)
