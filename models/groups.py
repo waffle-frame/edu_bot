@@ -25,6 +25,8 @@ class Group(Base):
 
     id = Column(Integer, primary_key = True)
     created_at = Column(DateTime(timezone=True), default = datetime.utcnow)
+    user_id = Column(Integer, nullable = False)
+    group_id = Column(Integer, nullable = False)
     first_name = Column(VARCHAR(50), nullable = False)
     last_name = Column(VARCHAR(50), nullable = True)
     username = Column(VARCHAR(20), nullable = True)
@@ -59,6 +61,15 @@ class Group(Base):
             self.group_title, self.link, self.occupation_type, self.created_at 
         ).order_by(desc(self.created_at)
         ).limit(limit)
+
+        data = await db.execute(query)
+        await db.commit()
+
+        return data.fetchall()
+
+    @classmethod
+    async def get_user_groups_by_id(self, db: scoped_session, user_id: int):
+        query = select(self.group_id).where(self.user_id == user_id)
 
         data = await db.execute(query)
         await db.commit()

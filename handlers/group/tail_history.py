@@ -2,7 +2,6 @@ from aiogram.types import Message
 from sqlalchemy.orm import scoped_session
 
 from models.groups import Group
-from keyboards.type_of_lesson import create_group_button_text
 
 
 async def tail_history(message: Message, db: scoped_session):

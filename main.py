@@ -1,4 +1,5 @@
 # Packages
+from os import environ
 from loguru import logger
 from aiogram import Dispatcher, executor
 
@@ -25,6 +26,7 @@ async def start(dp: Dispatcher):
     setup_logger(conf.logger.path)
     handlers.setup_handlers(dp)
 
+    environ['bot_id'] = str(dp.bot.id)
     dp.userbot = userbot    # ???
     dp.db_engine = engine   # ???
 

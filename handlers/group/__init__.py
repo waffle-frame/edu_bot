@@ -5,6 +5,7 @@ from aiogram.dispatcher.filters.builtin import Command
 
 from states.create_group import CreateGroup
 from handlers.group.title import set_group_title
+from handlers.group.remove_user import remove_user
 from handlers.group.tail_history import tail_history
 from handlers.group.occupation_type import select_occupation_type
 from handlers.group.photo import question_for_set_photo, get_group_photo, set_group_photo
@@ -20,3 +21,4 @@ def register_group_create(dp: Dispatcher):
     dp.register_message_handler(set_group_photo, content_types=ContentType.ANY, state=CreateGroup.image)
 
     dp.register_message_handler(tail_history, Command("history"), state="*")
+    dp.register_message_handler(remove_user, Command("remove_user"), state="*")
