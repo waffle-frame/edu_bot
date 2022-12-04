@@ -18,6 +18,10 @@ conf = load_config()
 
 # Setup dependencies, handlers, connections
 async def start(dp: Dispatcher):
+    bot_data = await dp.bot.get_me()
+    environ['bot_id'] = str(bot_data.id)
+    environ['bot_username'] = str(bot_data.username)
+
     await update_commands(dp)
     userbot = await setup_userbot(conf.userbot)
     engine, database = setup_database(conf.database)
@@ -26,7 +30,6 @@ async def start(dp: Dispatcher):
     setup_logger(conf.logger.path)
     handlers.setup_handlers(dp)
 
-    environ['bot_id'] = str(dp.bot.id)
     dp.userbot = userbot    # ???
     dp.db_engine = engine   # ???
 

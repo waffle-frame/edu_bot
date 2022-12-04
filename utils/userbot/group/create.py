@@ -1,3 +1,4 @@
+from os import environ
 from loguru import logger
 
 from telethon.client import TelegramClient
@@ -16,7 +17,7 @@ async def create_megagroup(client: TelegramClient, data: dict):
     """
     try:
         result = await client(CreateChatRequest(
-            users = ["educational_establishments_bot"], title = data["title"]
+            users = [environ['bot_username']], title = data["title"]
         ))
         group_id = result.chats[0].id
 
