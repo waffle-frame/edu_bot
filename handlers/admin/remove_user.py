@@ -4,7 +4,7 @@ from sqlalchemy.orm import scoped_session
 from telethon.client import TelegramClient
 
 from models.groups import Group
-from utils.userbot.group.remove_user import remove_user_from_groups
+from utils.userbot.admin.remove_user import remove_user_from_groups
 
 async def remove_user(message: Message, db: scoped_session, userbot: TelegramClient):
     parse_command = message.get_full_command()

@@ -1,4 +1,5 @@
-import os 
+import os, json
+from typing import List
 from dotenv import load_dotenv
 from dataclasses import dataclass
 
@@ -30,11 +31,17 @@ class Logger:
     level: str
 
 @dataclass
+class Admin:
+    admin_ids: List[int]
+
+@dataclass
 class Config:
     bot: Bot
     userbot: Userbot
     database: Database
     logger: Logger
+    admins: Admin
+
 
 def load_config():
     load_dotenv()
@@ -59,4 +66,7 @@ def load_config():
             path = os.environ.get("LOGGER_PATH"),
             level = "DEBUG",
         ),
+        admins = Admin(
+            admin_ids = json.loads(os.environ['ADMIN_IDS'])
+        )
     )
