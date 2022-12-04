@@ -58,7 +58,7 @@ class Group(Base):
             limit = kwargs.get('limit')
 
         query = select(
-            self.group_title, self.link, self.occupation_type, self.created_at 
+            self.group_title, self.link, self.occupation_type, self.created_at, self.username 
         ).order_by(desc(self.created_at)
         ).limit(limit)
 

@@ -16,6 +16,6 @@ async def tail_history(message: Message, db: scoped_session):
 
     tail_text = f'Последняя активность: ({tail.__len__()})\n\n'
     for i in tail:
-        tail_text += f"{i[3].strftime('%m-%d-%y %H:%M')} {i[0]} ({i[2].value[:4]}.) <a href='{i[1]}'>Ссылка</a>\n"
+        tail_text += f"{i[3].strftime('%m-%d-%y %H:%M')} {i[0]} ({i[2].value[:4]}.) -> @{i[4]} <a href='{i[1]}'>Ссылка</a>\n"
 
     await message.answer(tail_text)
