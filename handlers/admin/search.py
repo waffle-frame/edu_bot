@@ -23,13 +23,13 @@ async def inline_echo(query: InlineQuery, db: scoped_session):
 
         for j in data[i]:
             result.append(InlineQueryResultArticle(
-                id = f'{i}_{text}_{str(randint(-100000, 100000))}',
+                id = f'{i}_{text}_{str(randint(-10000000, 10000000))}',
                 title = i,
                 description = f'{j[1]} {j[2]}',
                 input_message_content=InputTextMessageContent(text, parse_mode="HTML"),
             ))
 
-    await query.answer(result, cache_time=2, is_personal=True)
+    await query.answer(result, cache_time=1, is_personal=True)
 
 
 async def get_similar_movies(query: ChosenInlineResult, db: scoped_session):
