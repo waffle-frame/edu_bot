@@ -26,6 +26,6 @@ async def complex_action(message: Message, userbot: TelegramClient,
     )
 
     if not insert:
-        return "Упс... Что-то пошло не так"
+        return f"{link}\nВозникли некоторые трудности, свяжитесь с администратором!"
 
     return link

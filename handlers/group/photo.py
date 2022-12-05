@@ -34,8 +34,8 @@ async def get_group_photo(message: Message, state: FSMContext,
 
     async with state.proxy() as data:
         data["photo_path"] = ""
-        data["user_id"] = message.chat.id
-        data["username"] = message.chat.username
+        data["user_id"] = message['from'].id
+        data["username"] = message['from'].username
 
     data = await state.get_data()
     invite_link = await complex_action(message, userbot, db, data)
@@ -43,7 +43,7 @@ async def get_group_photo(message: Message, state: FSMContext,
     await state.finish()
     await message.answer(f"Группа была успешно создана!\nПригласительная ссылка: {invite_link}")
 
-    
+
 async def set_group_photo(message: Message, state: FSMContext, 
                             db: scoped_session, userbot: TelegramClient):
     if message.content_type != ContentType.PHOTO:
@@ -65,7 +65,7 @@ async def set_group_photo(message: Message, state: FSMContext,
 
     async with state.proxy() as data:
         data["photo_path"] = path_to_image
-        data["user_id"] = message.chat.id
+        data["user_id"] = message['from'].id
         data["username"] = username
 
     data = await state.get_data()

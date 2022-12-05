@@ -6,7 +6,7 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy import insert, select, desc
 from sqlalchemy_utils.types import ChoiceType
 from sqlalchemy.exc import IntegrityError, DBAPIError
-from sqlalchemy import Column, String, Integer, DateTime, VARCHAR
+from sqlalchemy import Column, String, Integer, DateTime, VARCHAR, BigInteger
 
 from models import Base
 
@@ -23,10 +23,10 @@ class Group(Base):
         ("Индивидуальные", "Индивидуальные"),
     ]
 
-    id = Column(Integer, primary_key = True)
+    id = Column(BigInteger, primary_key = True)
     created_at = Column(DateTime(timezone=True), default = datetime.utcnow)
-    user_id = Column(Integer, nullable = False)
-    group_id = Column(Integer, nullable = False)
+    user_id = Column(BigInteger, nullable = False)
+    group_id = Column(BigInteger, nullable = False)
     first_name = Column(VARCHAR(50), nullable = False)
     last_name = Column(VARCHAR(50), nullable = True)
     username = Column(VARCHAR(20), nullable = True)
@@ -44,10 +44,10 @@ class Group(Base):
         except IntegrityError as e:
             logger.error(e)
             return False
-        except DBAPIError as e:
-            logger.error("ROLLBACK: ", e)
+        except Exception as e:
+            logger.error("ROLLBACK: ", e, kwargs)
             await db.rollback()
-            raise False
+            return False
 
         return True
 
@@ -75,3 +75,21 @@ class Group(Base):
         await db.commit()
 
         return data.fetchall()
+
+    @classmethod
+    async def search(self, db: scoped_session, title: str, limit: int):
+        users_query = "SELECT max(user_id), max(first_name) || ' ' || max(last_name), '@'||max(username), count(*) " + \
+                f"FROM groups WHERE lower(first_name) ILIKE lower('%{title}%') or lower(last_name) ILIKE lower('%{title}%') or lower(username) ILIKE lower('%{title}%') " + \
+                "GROUP BY user_id;"
+        groups_query = "SELECT group_id, group_title, '('||SUBSTRING(occupation_type, 0, 6)||'.)', link, '@'||username, TO_CHAR(created_at, 'dd.mm.yyyy') FROM groups " + \
+                f"WHERE lower(username) ILIKE lower('%{title}%') or lower(link) ILIKE lower('%{title}%') or lower(occupation_type) ILIKE lower('%{title}%') or lower(group_title) ILIKE lower('%{title}%') ORDER BY created_at asc LIMIT {limit}"
+
+        users = await db.execute(users_query)
+        groups = await db.execute(groups_query)
+        await db.commit()
+
+        data = {}
+        data['Пользователь'] = [ i for i in users.all() ]
+        data['Группа'] = [ j for j in groups.all()]
+
+        return data
