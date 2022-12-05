@@ -21,16 +21,16 @@ async def create_megagroup(client: TelegramClient, data: dict):
         ))
         group_id = result.chats[0].id
 
-        try:
-            await client(AddChatUserRequest(
-                chat_id = group_id, user_id = data["username"], fwd_limit = 100
-            ))
-            await update_photo(client, group_id, data['photo_path'])
-            megagroup_id = await migrate_to_megagroup(client, group_id, data, True)
-            return megagroup_id, await generate_invite_link(client, megagroup_id)
+        # try:
+        #     await client(AddChatUserRequest(
+        #         chat_id = group_id, user_id = data["username"], fwd_limit = 100
+        #     ))
+        #     await update_photo(client, group_id, data['photo_path'])
+        #     megagroup_id = await migrate_to_megagroup(client, group_id, data, True)
+        #     return megagroup_id, await generate_invite_link(client, megagroup_id)
 
-        except Exception as e:
-            logger.error(e)
+        # except Exception as e:
+        #     logger.error(e)
 
         await update_photo(client, group_id, data['photo_path'])
         megagroup_id = await migrate_to_megagroup(client, group_id, data, False)
