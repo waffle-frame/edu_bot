@@ -40,7 +40,7 @@ async def get_similar_movies(query: ChosenInlineResult, db: scoped_session):
 
     if parse_data[0] == 'Пользователь':
         for i in data["Пользователь"]:
-            text += f'<code>{i[0]} {i[1]}</code> (Групп: {i[3]}) -> {i[2]}\n'
+            text += f'\n<code>{i[0]} {i[1]}</code> (Групп: {i[3]}) -> {i[2]}'
     else:
         temp_date = ''
         for i in data["Группа"]:
