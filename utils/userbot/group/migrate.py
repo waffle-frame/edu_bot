@@ -16,6 +16,11 @@ async def migrate_to_megagroup(client: TelegramClient, group_id: int,
         ))
         channel_id = channel.chats[0].migrated_to.channel_id
 
+        await client(TogglePreHistoryHiddenRequest(
+            channel = PeerChannel(channel_id),
+            enabled = False
+        ))
+
         if not set_admin:
             return channel_id
 
@@ -41,10 +46,6 @@ async def migrate_to_megagroup(client: TelegramClient, group_id: int,
             user_id = PeerUser(data["user_id"])
         ))
 
-        await client(TogglePreHistoryHiddenRequest(
-            channel = PeerChannel(channel_id),
-            enabled = False
-        ))
 
         return channel_id
     except Exception as e:
